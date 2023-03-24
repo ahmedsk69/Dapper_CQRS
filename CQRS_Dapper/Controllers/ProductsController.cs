@@ -1,5 +1,7 @@
 ﻿using CQRS_Dapper.Commands;
+using CQRS_Dapper.Commands.Products;
 using CQRS_Dapper.Model;
+using CQRS_Dapper.Notifications;
 using CQRS_Dapper.Queries.Products;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -24,11 +26,18 @@ namespace CQRS_Dapper.Controllers
         [HttpPost("AddProduct")]
         public async Task<ActionResult> AddProductAsync([FromBody] Product product)
         {
-            {
-                await _mediator.Send(new AddProductCommand(product)).ConfigureAwait(true);
+            var productToReturn = await _mediator.Send(new AddProductCommand(product)).ConfigureAwait(true);
+            await _mediator.Publish(new ProductAddedNotification(productToReturn)).ConfigureAwait(true);
+            return CreatedAtRoute("GetProductById", new { id = productToReturn.Id }, productToReturn);
+           
+        }
 
-                return StatusCode(201);
-            }
+        [HttpGet("{id:int}", Name = "GetProductById")]
+        public async Task<ActionResult> GetProductByIdAsync(int id)
+        {
+            var product = await _mediator.Send(new GetProductByIdQuery(id)).ConfigureAwait(true);
+
+            return Ok(product);
         }
     }
 }

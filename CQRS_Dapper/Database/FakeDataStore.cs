@@ -25,5 +25,14 @@ namespace CQRS_Dapper.Database
         {
             return await Task.FromResult(_products).ConfigureAwait(true);
         }
+
+        public Task<Product> GetProductByIdAsync(int id) =>Task.FromResult(_products.Single(p => p.Id == id));
+
+
+        public Task EventOccuredAsync(Product product, string evt)
+        {
+            _products.Single(p => p.Id == product.Id).Name = $"{product.Name} evt: {evt}";
+            return Task.CompletedTask;
+        }
     }
 }

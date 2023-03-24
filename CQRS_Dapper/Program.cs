@@ -1,4 +1,6 @@
+using CQRS_Dapper.Behaviors;
 using CQRS_Dapper.Database;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.Services.AddSingleton<FakeDataStore>();
+builder.Services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
 var app = builder.Build();
 
