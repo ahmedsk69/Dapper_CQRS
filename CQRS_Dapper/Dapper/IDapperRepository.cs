@@ -14,6 +14,8 @@ namespace CQRS_Dapper.Dapper
         Task<object> ExecuteScalarAsync(string sp, object param = null, CommandType commandType = CommandType.Text);
         object ExecuteReader(string sp, object param = null, CommandType commandType = CommandType.Text);
         Task<SqlMapper.GridReader> QueryMultipleAsync(string sp, object param = null, CommandType commandType = CommandType.Text);
+        Task<dynamic> QuerySingleAsync(string sp, object param = null, CommandType commandType = CommandType.Text);
+        Task<T> QuerySingleAsync<T>(string sp, object param = null, CommandType commandType = CommandType.Text);
     }
 
 }

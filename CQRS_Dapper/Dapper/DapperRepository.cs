@@ -92,6 +92,14 @@ namespace CQRS_Dapper.Dapper
                 return   connection.ExecuteReader(sp, param, commandType: commandType);
             }
         }
+        public async Task<dynamic> QuerySingleAsync(string sp, object param = null, CommandType commandType = CommandType.Text)
+        {
+            using (var connection = CreateConnection())
+            {
+                connection.Open();
+                return await connection.QuerySingleAsync(sp, param, commandType: commandType).ConfigureAwait(true);
+            }
+        }
         public Task<GridReader> QueryMultipleAsync(string sp, object param = null, CommandType commandType = CommandType.Text)
         {
             using (var connection = CreateConnection())
@@ -153,10 +161,13 @@ namespace CQRS_Dapper.Dapper
         }
 
         #region Transaction
-
         public Task<int> ExecuteAsync(IDbTransaction dbTransaction, string sp, object param = null, CommandType commandType = CommandType.Text)
         {
            return dbTransaction.Connection.ExecuteAsync(sp, param, commandType: commandType, transaction: dbTransaction);
+        }
+        public Task<dynamic> QuerySingleAsync(IDbTransaction dbTransaction, string sp, object param = null, CommandType commandType = CommandType.Text)
+        {
+            return  dbTransaction.Connection.QuerySingleAsync(sp, param, commandType: commandType, transaction: dbTransaction);
         }
 
         public async Task<T> QueryAsync<T>(IDbTransaction dbTransaction, string sp, object param = null, CommandType commandType = CommandType.Text)
